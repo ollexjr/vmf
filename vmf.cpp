@@ -43,7 +43,7 @@ bool VMFObject::get_wobject(object_id id, std::string name, void ** optr) {
 			return true;
 		}
 	}
-	//printf("[VMFObject] key does not exist\n");
+	printf("[VMFObject] key does not exist\n");
 	return false;
 }
 
@@ -92,9 +92,6 @@ VMFObject * VMFObject::add_plane(const std::string & key, glm::vec3 v1, glm::vec
 	p[1] = v2;
 	p[2] = v3;
 
-	//if (v1.x > this->_mx) {
-	//	std::min(_mx, v.x);
-	//}
 	struct object_map om;
 	om.id = object_id::PLANE;
 	om.name = key;
@@ -110,21 +107,16 @@ VMFObject * VMFObject::add_plane_s(const std::string & key, plane f) {
 }
 VMFObject * VMFObject::add_axis_s(std::string key, axis & f) {
 	char buf[100];
-
-
 	axis * a = new axis;
 	*a = f;
 
 	struct object_map om;
-
 	om.id = object_id::AXIS;
 	om.name = key;
 	om.data = (void*)a;
 
 	this->_map.push_back(om);
 	return this;
-	//sprintf_s(buf, 100, "[%d %d %d %d] %f", f.x, f.y, f.z, f.a, f._f);
-	//return this->add_string(key, buf);
 }
 VMFObject * VMFObject::add_axis(std::string key, int x, int y, int z, int dec, float dec2) {
 	char buf[100];
@@ -145,7 +137,7 @@ VMFObject * VMFObject::add_int(std::string key, int val) {
 	om.id = object_id::VINT32;
 	om.name = key;
 	om.data = new int;
-	*(int*)(om.data) = val;// = 1;
+	*(int*)(om.data) = val;
 
 	this->_map.push_back(om);
 	return this;
@@ -180,10 +172,7 @@ std::string * VMFObject::get_string(std::string key) {
 	}
 	return (str);
 }
-/*std::string VMFObject::get_string(std::string key)
-{
-	return *get_string(key);
-}*/
+
 VMFObject * VMFObject::get_object(std::string key)
 {
 	for (int i = 0; i < this->_object_map.size(); i++) {
@@ -205,6 +194,7 @@ bool VMFObject::get_objects(std::string key, std::vector<VMFObject*> * out) {
 	}
 	return found > 0;
 }
+
 plane * VMFObject::get_plane()
 {
 	for (int i = 0; i < this->_map.size(); i++) {
@@ -214,10 +204,7 @@ plane * VMFObject::get_plane()
 	}
 	return nullptr;
 }
-/*std::vector<VMFObject*>* VMFObject::get_brushes()
-{
-	return &this->_solid_map;
-}*/
+
 bool VMFObject::has_child_classes()
 {
 	return this->_object_map.size() > 0;
@@ -227,7 +214,6 @@ bool VMFObject::has_keys()
 	return this->_object_map.size() > 0;
 }
 void VMFObject::dump_table(int indent) {
-	//fill_indent(indent);
 	indent++;
 	printf("vmf_object : %s | #Variables: %d | #Objects: %d\n",
 		this->_name.c_str(),
@@ -263,10 +249,8 @@ VMFObject * VMFObject::add_string(std::string key, std::string value) {
 	return this;
 }
 std::string * VMFObject::get_string_ptr(const std::string & key) {
-	//_try_cache(key);
 	std::string * str = nullptr;
 	if (!this->get_wobject(object_id::STRING, key, (void**)&str)) {
-		//assert(false);
 		return nullptr;
 	}
 	return str;
@@ -305,7 +289,6 @@ int VMFObject::write(std::ofstream & f, int indent) {
 			f << ax->z << " ";
 			f << ax->a << "] ";
 			f << ax->_f << "\"" << NEWLINE;
-			// << (*(std::string*)m->data) << 
 		}break;
 		case object_id::PLANE:
 			/* effort to write this tbh*/
@@ -354,20 +337,18 @@ VMFObject::~VMFObject() {
 			delete (int*)m->data;
 			break;
 		case object_id::STRING:
-			//(*(std::string*)m->data);
 			delete (std::string*)m->data;
 			break;
 		case object_id::PLANE:
-			//glm::vec3 * ary = ((glm::vec3*)m->data);
 			delete[](glm::vec3*)m->data;
 		default:
 			printf("memory leak in dealloc, debug this\n");
 			break;
 		}
-		//delete this->_map[i].data;
 	}
 }
 
 VMFPrefab::VMFPrefab()
 {
+	
 }

@@ -37,9 +37,6 @@ void VMFFileLineReader::strip_escape_codes(std::string & buf)
 }
 
 int VMFFileLineReader::_findClass(int start, svclass * f) {
-	//std::regex _regexClassName("([a-z]+)");
-
-	//std::string name;
 	bool fClassName = false;
 	int openBrace = 0;
 	int openIndex = 0;
@@ -52,16 +49,6 @@ int VMFFileLineReader::_findClass(int start, svclass * f) {
 	for (int i = start; i < sz; i++) {
 		std::string * v = &this->_lineBuf[i];
 		if (!fClassName) {
-			/*std::smatch match;
-			if (std::regex_match(
-				*v,
-				match,
-				_regexClassName) && match.size() > 1) {
-				name = match.str(1);
-				//Iprintf(this->_depth, "[_findClass: %s]\n", match.str(1).c_str());
-				fClassName = true;
-			}*/
-
 			if (this->_isClassName(i)) {
 				f->name = (*v);
 				fClassName = true;
@@ -167,32 +154,9 @@ bool VMFFileLineReader::_parse_plane(const std::string & src, plane * f) {
 	}
 	if (ridx != 9) {
 		printf("warning plane! invalid amount of values\n");
+		return false
 	}
-	/*printf("%f %f %f, (%f, %f, %f) [%f, %f, %f]\n", 
-		(*f)[0].x, (*f)[0].y, (*f)[0].z, 
-		(*f)[1].x, (*f)[1].y, (*f)[1].z,
-		(*f)[2].x, (*f)[2].y, (*f)[2].z);/**/
 	return true;
-
-
-	/*if (std::regex_search(src, match, *_regexPlane) && match.size() > 1) {
-		(*f)[0].x = strtof(match.str(1).c_str(), nullptr);
-		(*f)[0].y = strtof(match.str(2).c_str(), nullptr);
-		(*f)[0].z = strtof(match.str(3).c_str(), nullptr);
-
-		(*f)[1].x = strtof(match.str(4).c_str(), nullptr);
-		(*f)[1].y = strtof(match.str(5).c_str(), nullptr);
-		(*f)[1].z = strtof(match.str(6).c_str(), nullptr);
-
-		(*f)[2].x = strtof(match.str(7).c_str(), nullptr);
-		(*f)[2].y = strtof(match.str(8).c_str(), nullptr);
-		(*f)[2].z = strtof(match.str(9).c_str(), nullptr);
-	}*/
-	//("\\\\(([-0-9]+) ([-0-9]+) ([-0-9]+)\\\\)");
-	//strip_non_numeric(&src);
-	//std::regex _regexPlane("\\(([-0-9]+) ([-0-9]+) ([-0-9]+)\\) \\(([-0-9]+) ([-0-9]+) ([-0-9]+)\\) \\(([-0-9]+) ([-0-9]+) ([-0-9]+)\\)");
-	//std::smatch match;
-	return 0;
 }
 
 bool VMFFileLineReader::_parse_axis(const std::string & src, axis * a){
@@ -256,13 +220,6 @@ bool VMFFileLineReader::_isKey(int index) {
 		return true;
 	}
 	return false;
-	/*for (int i = 0; i < v->size(); i++) {
-		if ((*v)[i] == '\"') {
-			//very cheeky speed shortcut, only check if the line contains a \"
-			return true;
-		}
-	}
-	return false;*/
 }
 
 int VMFFileLineReader::_getKey(int index, VMFObject * o) {
@@ -343,37 +300,6 @@ int VMFFileLineReader::_getKey(int index, VMFObject * o) {
 		printf("invalid key/value!: %s\n", v->c_str());
 		return false;
 	}
-
-	//Iprintf(this->_depth, "%s : %s\n", key.c_str(), v->substr(openTagKey, closeTagKey).c_str());
-	//v->substr(openTagValue, closeTagValue);
-	//this->_parse_plane(*value, &f);
-	//o->add_plane_s(*key, f);
-
-	//("\"([a-zA-Z0-9]+)\" \"([a-zA-Z0-9_]+)\"");
-	//("(\"[a-zA-Z0-9]+\") (\"[a-zA-Z0-9_]+\")");
-	//std::regex __regexKeyPair("\"([a-z0-9_]+)\" \"([a-zA-Z0-9_/\\-+ .()\\[\\]]+)\"");
-	//*this->
-
-	/*if (std::regex_match(*v, match, *_regexKeyPair) && match.size() > 1) {
-		std::string * key = &match.str(1);
-		std::string * value = &match.str(2);
-		//.c_str();
-		//Iprintf(this->_depth, "%s : %s\n", key.c_str(), value.c_str());
-
-		if ((*key)[0] == 'p' && (*key) == "plane") {
-			plane f = {};
-			this->_parse_plane(*value, &f);
-			o->add_plane_s(*key, f);
-		}
-		else if ((*key)[0] == 'v' && (*key) == "vaxis") {
-
-		}
-		else {
-
-		}
-		//match = {};
-		return 1;
-	}*/
 	return -1;
 }
 
@@ -399,12 +325,6 @@ int VMFFileLineReader::_parse_class(svclass * c, VMFObject * f) {
 				return -1;
 			}
 			if (cc.name == "solid" && f->get_name() != "entity") {
-				
-				/*if (std::string * p = v->get_string("portal")) {
-					if (p) {
-						printf("brush_portal\n");
-					}
-				}*/
 				this->_vmf->add_object_brush(v);
 			}
 			i = cc.end;
@@ -463,17 +383,12 @@ VMFFile * VMFFileLineReader::get_file_tree() {
 	return this->_vmf;
 }
 
-/*VMFFile * VMFFileLineReader::get_file_tree_ptr(){
-	return this->_vmf;
-}*/
-
 bool VMFFileLineReader::open(std::string name)
 {
 	this->_filename = name;
 	this->_file.open(name);
 	if (!this->_file.is_open())
 		return false;
-	//"G:\\src\\csh-ripper\\VMF_MazeGeneratorWin64\\VMF_MazeGeneratorWin64\\prefab\\test-prefab.vmf"
 	return true;
 }
 
@@ -494,9 +409,6 @@ bool VMFFileLineReader::parse(VMFFile * f) {
 		return false;
 	}
 	f->_filename = this->_filename;
-	//this->_regexKeyPair = new std::regex("\"([a-z0-9_]+)\" \"([a-zA-Z0-9_/\\-+ .()\\[\\]]+)\"");
-	//this->_regexPlane = new std::regex(("\\(([-0-9]+) ([-0-9]+) ([-0-9]+)\\) \\(([-0-9]+) ([-0-9]+) ([-0-9]+)\\) \\(([-0-9]+) ([-0-9]+) ([-0-9]+)\\)"));
-
 	this->_vmf = f;
 
 	//reserve some space in the buffer
@@ -518,13 +430,9 @@ bool VMFFileLineReader::parse(VMFFile * f) {
 	return true;
 }
 
-//VMFFileLineReader::VMFFileLineReader() {}
 VMFFileLineReader::~VMFFileLineReader() {
 	if (this->_file.is_open())
 		this->_file.close();
-
-	//if (this->_regexKeyPair)
-	//	delete this->_regexKeyPair;
 	if (this->_regexPlane)
 		delete this->_regexPlane;
 }
@@ -538,14 +446,11 @@ void VMFFileLineReaderPrefab::strip_escape_codes(std::string & buf)
 			buf[i] == '\r' ||
 			buf[i] == '\t') {
 			switch (buf[i]) {
-			case 10://'\n':
-					//printf("n");
+			case 10:
 				break;
 			case '\r':
-				//printf("r");
 				break;
 			case '\t':
-				//printf("t");
 				break;
 			}
 			buf.erase(buf.begin() + i);
@@ -604,26 +509,13 @@ int VMFFileLineReaderPrefab::_findClass(int start, svclass * f) {
 }
 
 bool VMFFileLineReaderPrefab::_parse_plane(const std::string & src, plane * f) {
-
-	for (int i = 0; i < src.size(); i++) {
+	//TODO: 
+	assert(false)
+	
+	/*for (int i = 0; i < src.size(); i++) {
 		const char c = src[i];
-		//if()
-	}
-
-	/*if (std::regex_search(src, match, *_regexPlane) && match.size() > 1) {
-		(*f)[0].x = strtof(match.str(1).c_str(), nullptr);
-		(*f)[0].y = strtof(match.str(2).c_str(), nullptr);
-		(*f)[0].z = strtof(match.str(3).c_str(), nullptr);
-
-		(*f)[1].x = strtof(match.str(4).c_str(), nullptr);
-		(*f)[1].y = strtof(match.str(5).c_str(), nullptr);
-		(*f)[1].z = strtof(match.str(6).c_str(), nullptr);
-
-		(*f)[2].x = strtof(match.str(7).c_str(), nullptr);
-		(*f)[2].y = strtof(match.str(8).c_str(), nullptr);
-		(*f)[2].z = strtof(match.str(9).c_str(), nullptr);
 	}*/
-	return 0;
+	return false;
 }
 
 bool VMFFileLineReaderPrefab::_isClassName(int index) {
@@ -775,10 +667,7 @@ int VMFFileLineReaderPrefab::_parse_top(std::vector<std::string> buf, VPrefab * 
 
 			}
 			else {
-
 				i = c.end;
-				//VMFObject * v = f->add_object(c.name);
-				//eat class 
 				_parse_class(&c, f);
 				//set the index to the end index of the class,
 				//because parse_class has eaten it
@@ -840,13 +729,9 @@ bool VMFFileLineReaderPrefab::parse(VPrefab * f) {
 	return true;
 }
 
-//VMFFileLineReaderPrefab::VMFFileLineReaderPrefab() {}
 VMFFileLineReaderPrefab::~VMFFileLineReaderPrefab() {
 	if (this->_file.is_open())
 		this->_file.close();
-
-	//if (this->_regexKeyPair)
-	//	delete this->_regexKeyPair;
 	if (this->_regexPlane)
 		delete this->_regexPlane;
 }

@@ -10,20 +10,12 @@ std::string VMFFile::get_filename()
 }
 
 std::vector<VMFObject *> * VMFFile::get_entities(){
-	/*for (int i = 0; i < this->_object_map.size(); i++) {
-		if (_object_map[i]->get_name() == "entity") {
-
-		}
-	}*/
-
 	return &this->_entity_map;
 }
 
 std::vector<VMFObject*> * VMFFile::get_brush_list()
 {
 	return &this->_solid_map;
-	//return this->get_world()->get_object("solid");
-	// ->get_brushes("");
 }
 
 VMFObject * VMFFile::get_class(std::string name){
@@ -37,10 +29,6 @@ VMFObject * VMFFile::get_class(std::string name){
 
 VMFObject * VMFFile::add_object(std::string name) {
 	VMFObject * f = new VMFObject(name, 0);
-	//if (name == "entity") {
-	//	this->_entity_map.push_back(f);
-	//}
-	
 	this->_object_map.push_back(f);
 	return f;
 }
